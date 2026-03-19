@@ -1,7 +1,11 @@
 package com.api.realsteel.controller;
 
+import com.api.realsteel.dto.CreateRecordRequest;
 import com.api.realsteel.entity.RecordEntity;
-import com.api.realsteel.repository.RecordRepository;
+import com.api.realsteel.service.RecordService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,19 +15,26 @@ import java.util.List;
 @CrossOrigin
 public class RecordController {
 
-    private final RecordRepository recordRepository;
+    private final RecordService recordService;
 
-    public RecordController(RecordRepository recordRepository) {
-        this.recordRepository = recordRepository;
+    public RecordController(RecordService recordService) {
+        this.recordService = recordService;
     }
 
-    @PostMapping
-    public RecordEntity createRecord(@RequestBody RecordEntity record) {
-        return recordRepository.save(record);
+    @PostMapping("/session/{sessionId}")
+    public ResponseEntity<RecordEntity> createRecord(@PathVariable Long sessionId,
+                                                     @Valid @RequestBody CreateRecordRequest request) {
+        RecordEntity created = recordService.createRecord(
+                sessionId,
+                request.getExerciseId(),
+                request.getPeso(),
+                request.getRepeticiones(),
+                request.getHoraRegistro());
+        return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
 
-    @GetMapping("/{sessionId}")
+    @GetMapping("/session/{sessionId}")
     public List<RecordEntity> getSessionRecords(@PathVariable Long sessionId) {
-        return recordRepository.findBySession_SessionId(sessionId);
+        return recordService.getRecordsBySession(sessionId);
     }
 }

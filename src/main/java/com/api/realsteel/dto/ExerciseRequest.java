@@ -1,34 +1,18 @@
-package com.api.realsteel.entity;
+package com.api.realsteel.dto;
 
-import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 
-@Entity
-@Table(name = "exercises")
-public class ExerciseEntity {
+public class ExerciseRequest {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long ejercicioId;
-
+    @NotBlank(message = "El nombre del ejercicio es obligatorio")
     private String nombre;
 
+    @NotBlank(message = "El grupo muscular es obligatorio")
     private String grupoMuscular;
 
-    @Column(columnDefinition = "TEXT")
     private String descripcion;
 
     private String imagenUrl;
-
-    public ExerciseEntity() {}
-
-    public Long getEjercicioId() {
-        return ejercicioId;
-    }
-
-    public void setEjercicioId(Long ejercicioId) {
-        this.ejercicioId = ejercicioId;
-    }
 
     public String getNombre() {
         return nombre;

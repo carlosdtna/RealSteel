@@ -9,6 +9,6 @@ import java.util.List;
 @Repository
 public interface SessionRepository extends JpaRepository<SessionEntity, Long> {
 
-    List<SessionEntity> findByUser_UserId(Long userId);
+    List<SessionEntity> findByUser_UserId(String userId);
 
 }

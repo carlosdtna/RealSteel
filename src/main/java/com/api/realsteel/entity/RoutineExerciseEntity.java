@@ -7,39 +7,41 @@ import jakarta.persistence.*;
 @Table(name = "routine_exercises")
 public class RoutineExerciseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    private String diaSemana;
+    @EmbeddedId
+    private RoutineExerciseId id;
 
     private Integer orden;
 
     @JsonIgnore
+    @MapsId("rutinaId")
     @ManyToOne
-    @JoinColumn(name = "routine_id")
+    @JoinColumn(name = "rutina_id")
     private RoutineEntity routine;
 
+    @MapsId("ejercicioId")
     @ManyToOne
-    @JoinColumn(name = "exercise_id")
+    @JoinColumn(name = "ejercicio_id")
     private ExerciseEntity exercise;
 
     public RoutineExerciseEntity() {}
 
-    public Long getId() {
+    public RoutineExerciseId getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(RoutineExerciseId id) {
         this.id = id;
     }
 
     public String getDiaSemana() {
-        return diaSemana;
+        return id != null ? id.getDiaSemana() : null;
     }
 
     public void setDiaSemana(String diaSemana) {
-        this.diaSemana = diaSemana;
+        if (id == null) {
+            id = new RoutineExerciseId();
+        }
+        id.setDiaSemana(diaSemana);
     }
 
     public Integer getOrden() {

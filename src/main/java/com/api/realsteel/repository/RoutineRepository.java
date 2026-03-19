@@ -9,6 +9,6 @@ import java.util.List;
 @Repository
 public interface RoutineRepository extends JpaRepository<RoutineEntity, Long> {
 
-    List<RoutineEntity> findByUser_UserId(Long userId);
+    List<RoutineEntity> findByUser_UserId(String userId);
 
 }

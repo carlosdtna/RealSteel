@@ -10,6 +10,7 @@ public class RecordEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long recordId;
 
     private Double peso;
