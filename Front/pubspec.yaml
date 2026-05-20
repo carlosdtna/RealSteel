@@ -1,0 +1,59 @@
+name: realsteel
+description: RealSteel - IronCode TFG
+
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # HTTP
+  http: ^1.2.1
+
+  # Abrir URLs (suplementos)
+  url_launcher: ^6.3.0
+
+  # Calendario
+  table_calendar: ^3.1.2
+
+  # UUID para generar IDs de usuario
+  uuid: ^4.4.0
+
+  # SharedPreferences para guardar sesión
+  shared_preferences: ^2.2.3
+
+  flutter_map: ^6.1.0
+  latlong2: ^0.9.0
+  geolocator: ^11.0.0
+
+  fl_chart: ^0.68.0
+  shimmer: ^3.0.0
+
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+  flutter_launcher_icons: ^0.13.1
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/robotinicon.jpg"
+  web:
+    generate: true
+    image_path: "assets/images/robotinicon.jpg"
+    background_color: "#000000"
+  windows:
+    generate: true
+    image_path: "assets/images/robotinicon.jpg"
