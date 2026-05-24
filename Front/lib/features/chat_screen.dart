@@ -43,7 +43,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   String get _userId => UserSession.userId ?? 'guest';
 
-  static const String _groqApiKey = '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';
+  static const String _groqApiKey = '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';
   static const String _groqUrl = 'https://api.groq.com/openai/v1/chat/completions';
 
   static const String _systemPrompt = '''
@@ -100,6 +100,9 @@ IMPORTANTE:
         ...ChatStorage.getMessages(_userId).where((m) => m['role'] != 'system').toList(),
       ];
 
+      debugPrint("=== GROQ enviando mensaje a: $_groqUrl");
+      debugPrint("=== GROQ modelo: llama-3.3-70b-versatile");
+
       final response = await http.post(
         Uri.parse(_groqUrl),
         headers: {
@@ -114,6 +117,8 @@ IMPORTANTE:
         }),
       ).timeout(const Duration(seconds: 30));
 
+      debugPrint("=== GROQ status: ${response.statusCode}");
+
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         final reply = data['choices'][0]['message']['content'] as String;
@@ -122,9 +127,11 @@ IMPORTANTE:
           _isLoading = false;
         });
       } else {
+        debugPrint("=== GROQ ERROR: ${response.statusCode} — ${response.body}");
         throw Exception('Error ${response.statusCode}');
       }
     } catch (e) {
+      debugPrint("=== GROQ EXCEPTION: $e");
       setState(() {
         ChatStorage.addMessage(_userId, {
           'role': 'assistant',
@@ -160,7 +167,6 @@ IMPORTANTE:
         elevation: 0,
         title: Row(
           children: [
-            // Robot en AppBar
             ClipRRect(
               borderRadius: BorderRadius.circular(10),
               child: Image.asset(
@@ -171,7 +177,7 @@ IMPORTANTE:
               ),
             ),
             const SizedBox(width: 10),
-             Column(
+            Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text("RealSteel AI",
@@ -184,7 +190,7 @@ IMPORTANTE:
         ),
         actions: [
           IconButton(
-            icon:  Icon(Icons.delete_outline, color: AppColors.textSecondary),
+            icon: Icon(Icons.delete_outline, color: AppColors.textSecondary),
             onPressed: () {
               setState(() => ChatStorage.clear(_userId));
               ChatStorage.addMessage(_userId, {
@@ -197,7 +203,6 @@ IMPORTANTE:
       ),
       body: Column(
         children: [
-          // Lista de mensajes
           Expanded(
             child: ListView.builder(
               controller: _scrollController,
@@ -214,7 +219,6 @@ IMPORTANTE:
             ),
           ),
 
-          // Sugerencias rápidas (solo al inicio)
           if (messages.length == 1) ...[
             SizedBox(
               height: 44,
@@ -232,10 +236,9 @@ IMPORTANTE:
             const SizedBox(height: 8),
           ],
 
-          // Input
           Container(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-            decoration:  BoxDecoration(
+            decoration: BoxDecoration(
               color: AppColors.background,
               border: Border(top: BorderSide(color: AppColors.border, width: 0.5)),
             ),
@@ -244,25 +247,25 @@ IMPORTANTE:
                 Expanded(
                   child: TextField(
                     controller: _controller,
-                    style:  TextStyle(color: AppColors.text),
+                    style: TextStyle(color: AppColors.text),
                     maxLines: null,
                     textCapitalization: TextCapitalization.sentences,
                     decoration: InputDecoration(
                       hintText: "Pregunta sobre entrenamiento...",
-                      hintStyle:  TextStyle(color: AppColors.textHint),
+                      hintStyle: TextStyle(color: AppColors.textHint),
                       filled: true,
                       fillColor: AppColors.card,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(24),
-                        borderSide:  BorderSide(color: AppColors.border),
+                        borderSide: BorderSide(color: AppColors.border),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(24),
-                        borderSide:  BorderSide(color: AppColors.border),
+                        borderSide: BorderSide(color: AppColors.border),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(24),
-                        borderSide:  BorderSide(color: AppColors.accent, width: 1.5),
+                        borderSide: BorderSide(color: AppColors.accent, width: 1.5),
                       ),
                       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                     ),
@@ -308,7 +311,6 @@ class _MessageBubble extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (!isUser) ...[
-            // Robot como avatar del asistente
             ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: Image.asset(
@@ -355,7 +357,7 @@ class _MessageBubble extends StatelessWidget {
               child: Center(
                 child: Text(
                   (UserSession.nombre ?? "U")[0].toUpperCase(),
-                  style:  TextStyle(color: AppColors.accent, fontWeight: FontWeight.w700, fontSize: 13),
+                  style: TextStyle(color: AppColors.accent, fontWeight: FontWeight.w700, fontSize: 13),
                 ),
               ),
             ),
@@ -408,7 +410,6 @@ class _TypingIndicatorState extends State<_TypingIndicator>
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
         children: [
-          // Robot en indicador de escritura
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
             child: Image.asset(
@@ -473,7 +474,7 @@ class _SuggestionChip extends StatelessWidget {
         ),
         child: Text(
           text,
-          style:  TextStyle(color: AppColors.accent, fontSize: 12, fontWeight: FontWeight.w500),
+          style: TextStyle(color: AppColors.accent, fontSize: 12, fontWeight: FontWeight.w500),
         ),
       ),
     );

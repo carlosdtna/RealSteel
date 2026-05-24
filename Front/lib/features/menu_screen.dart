@@ -307,7 +307,9 @@ class _InicioTabState extends State<_InicioTab> {
     if (UserSession.userId == null) { setState(() => _loadingRacha = false); return; }
     try {
       final sesiones = await ApiService.getSesionesByUser(UserSession.userId!.toString());
-      final fechas = sesiones.map((s) => s['fecha'] as String? ?? '').where((f) => f.isNotEmpty).toSet().toList()..sort((a, b) => b.compareTo(a));
+      // Solo contar sesiones finalizadas (con horaFin no nulo)
+      final sesionesFinalizadas = sesiones.where((s) => s['horaFin'] != null).toList();
+      final fechas = sesionesFinalizadas.map((s) => s['fecha'] as String? ?? '').where((f) => f.isNotEmpty).toSet().toList()..sort((a, b) => b.compareTo(a));
       int racha = 0;
       DateTime dia = DateTime.now();
       for (int i = 0; i < 365; i++) {
@@ -348,14 +350,9 @@ class _InicioTabState extends State<_InicioTab> {
             child: PopupMenuButton<String>(
               color: AppColors.card,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide(color: AppColors.border)),
-              onSelected: (v) async {
-                if (v == "logout") {
-                  await UserSession.clear();
-                  Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => const LoginScreen()), (r) => false);
-                }
-                if (v == "perfil") {
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => const ProfileScreen()));
-                }
+              onSelected: (v) {
+                if (v == "logout") { UserSession.clear(); Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => const LoginScreen()), (r) => false); }
+                if (v == "perfil") { Navigator.push(context, MaterialPageRoute(builder: (_) => const ProfileScreen())); }
               },
               itemBuilder: (_) => [
                 PopupMenuItem(enabled: false, child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -1107,7 +1104,7 @@ class _EntrenamientoScreenState extends State<_EntrenamientoScreen> {
             if (serie['ok'] == true) {
               final peso = double.tryParse((serie['peso'] as TextEditingController).text) ?? 0.0;
               final reps = int.tryParse((serie['reps'] as TextEditingController).text) ?? 0;
-              if (peso > 0 || reps > 0) await ApiService.createRecord(sessionId: _sessionId!, exerciseId: ejercicio['ejercicioId'], numeroSerie: serie['num'], peso: peso, repeticiones: reps, completado: true);
+              await ApiService.createRecord(sessionId: _sessionId!, exerciseId: ejercicio['ejercicioId'], numeroSerie: serie['num'], peso: peso, repeticiones: reps, completado: true);
             }
           }
         }

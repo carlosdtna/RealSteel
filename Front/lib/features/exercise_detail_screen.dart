@@ -32,6 +32,7 @@ class _ExerciseDetailScreenState extends State<ExerciseDetailScreen> {
   }
 
   Future<void> _cargarHistorial() async {
+    debugPrint("=== buscando userId: ${UserSession.userId} exerciseId: ${widget.exercise.id}");
     if (UserSession.userId == null) {
       setState(() => _isLoadingHistorial = false);
       return;
@@ -41,11 +42,14 @@ class _ExerciseDetailScreenState extends State<ExerciseDetailScreen> {
         userId: UserSession.userId!,
         exerciseId: widget.exercise.id,
       );
+      debugPrint("=== HISTORIAL records: ${data.length}");
+      if (data.isNotEmpty) debugPrint("=== PRIMER RECORD: ${data.first}");
       setState(() {
         _historial = data;
         _isLoadingHistorial = false;
       });
-    } catch (_) {
+    } catch (e) {
+      debugPrint("=== ERROR historial: $e");
       setState(() => _isLoadingHistorial = false);
     }
   }
